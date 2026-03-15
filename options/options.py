@@ -25,6 +25,11 @@ class TestOptions():
         parser.add_argument('--batchSize', type=int, default=64)
 
         parser.add_argument('--isTrain', default=False, type=bool, help='train or test')
+        parser.add_argument(
+            '--gradientFlowMode',
+            action='store_true',
+            help='Enable tensor-returning score path for gradient-based optimization.'
+        )
         
         # additional parameters
 
@@ -89,6 +94,11 @@ class EvalOptions():
         parser.add_argument('--numThreads', default=4, type=int, help='# threads for loading data')
 
         parser.add_argument('--isTrain', default=False, type=bool, help='train or test')
+        parser.add_argument(
+            '--gradientFlowMode',
+            action='store_true',
+            help='Enable tensor-returning score path for gradient-based optimization.'
+        )
 
         # additional parameters
 
@@ -169,6 +179,11 @@ class TrainOptions():
         parser.add_argument('--lr', type=float, default=0.0001, help='initial learning rate for adam')
 
         parser.add_argument('--isTrain', default=True, type=bool, help='train or test')
+        parser.add_argument(
+            '--gradientFlowMode',
+            action='store_true',
+            help='Enable tensor-returning score path for gradient-based optimization.'
+        )
 
         self.initialized = True
 

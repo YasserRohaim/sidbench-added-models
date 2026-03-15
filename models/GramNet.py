@@ -8,6 +8,7 @@ class GramNet(nn.Module):
     def __init__(self, num_classes=1):
         super(GramNet, self).__init__()
         self.model = resnet18(num_classes=num_classes)
+        self.gradient_flow_mode = False
 
     def forward(self, x):
         return self.model(x)
@@ -19,8 +20,16 @@ class GramNet(nn.Module):
         except:
             self.model.load_state_dict(state_dict)
 
+    def set_gradient_flow(self, enabled=True):
+        self.gradient_flow_mode = enabled
+
+    def score(self, img, apply_sigmoid=False):
+        logits = self.forward(img).flatten()
+        if apply_sigmoid:
+            return logits.sigmoid()
+        return logits
+
     def predict(self, img):
         with torch.no_grad():
-            logits = self.forward(img)
-            return logits.sigmoid().flatten().tolist()
+            return self.score(img, apply_sigmoid=True).tolist()
         

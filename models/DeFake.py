@@ -24,6 +24,7 @@ class NeuralNet(nn.Module):
 class DeFake(nn.Module):
     def __init__(self, blip, encoder, num_classes=2, input_size=1024, hidden_size_list=[512,256]):
         super(DeFake, self).__init__()
+        self.gradient_flow_mode = False
 
         self.net = NeuralNet(input_size, hidden_size_list, num_classes)
 
@@ -44,9 +45,21 @@ class DeFake(nn.Module):
         state_dict = torch.load(ckpt, map_location='cpu')
         self.net.load_state_dict(state_dict)
 
+    def set_gradient_flow(self, enabled=True):
+        self.gradient_flow_mode = enabled
+
+    def score(self, img, apply_sigmoid=False):
+        if self.gradient_flow_mode and torch.is_grad_enabled():
+            raise RuntimeError(
+                "DeFake does not support end-to-end gradient flow: BLIP caption generation "
+                "and text tokenization are non-differentiable."
+            )
+        output = self.forward(img)
+        logits = output[:, 1] - output[:, 0]
+        if apply_sigmoid:
+            return logits.sigmoid()
+        return logits
+
     def predict(self, img):
         with torch.no_grad():
-            output = self.forward(img)
-            predict = F.softmax(output)[:, 1:2]
-            # predict = output.argmax(1)
-            return predict.flatten().tolist()
+            return self.score(img, apply_sigmoid=True).tolist()

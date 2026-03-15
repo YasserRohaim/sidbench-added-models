@@ -95,6 +95,7 @@ class COOI(): # Coordinates On Original Image
 class PSM(nn.Module):
     def __init__(self):
         super(PSM, self).__init__()
+        self.gradient_flow_mode = False
         self.resnet = resnet50(pretrained=True)
         self.COOI=COOI()
         self.mha_list=nn.Sequential(
@@ -150,8 +151,16 @@ class PSM(nn.Module):
         except:
             self.load_state_dict(state_dict)
 
+    def set_gradient_flow(self, enabled=True):
+        self.gradient_flow_mode = enabled
+
+    def score(self, input_img, cropped_img, scale, apply_sigmoid=False):
+        logits = self.forward(input_img, cropped_img, scale).flatten()
+        if apply_sigmoid:
+            return logits.sigmoid()
+        return logits
+
     def predict(self, input_img, cropped_img, scale):
         with torch.no_grad():
-            logits = self.forward(input_img, cropped_img, scale)
-            return logits.sigmoid().flatten().tolist()
+            return self.score(input_img, cropped_img, scale, apply_sigmoid=True).tolist()
         

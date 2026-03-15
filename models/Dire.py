@@ -8,6 +8,7 @@ class Dire(nn.Module):
     def __init__(self):
         super(Dire, self).__init__()
         self.model = resnet50(num_classes=1)
+        self.gradient_flow_mode = False
 
     def forward(self, x):
         return self.model(x)
@@ -19,8 +20,16 @@ class Dire(nn.Module):
         except:
             self.model.load_state_dict(state_dict)
 
+    def set_gradient_flow(self, enabled=True):
+        self.gradient_flow_mode = enabled
+
+    def score(self, img, apply_sigmoid=False):
+        logits = self.forward(img)["logits"].flatten()
+        if apply_sigmoid:
+            return logits.sigmoid()
+        return logits
+
     def predict(self, img):
         with torch.no_grad():
-            logits = self.forward(img)["logits"]
-            return logits.sigmoid().flatten().tolist()
+            return self.score(img, apply_sigmoid=True).tolist()
         

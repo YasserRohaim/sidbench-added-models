@@ -20,6 +20,7 @@ class Hook:
 class RineModel(nn.Module):
     def __init__(self, backbone, nproj, proj_dim):
         super(RineModel, self).__init__()
+        self.gradient_flow_mode = False
 
         # Load and freeze CLIP
         self.clip, _ = clip.load(backbone[0], device="cpu")
@@ -71,10 +72,17 @@ class RineModel(nn.Module):
             ]
         )
 
+    def set_gradient_flow(self, enabled=True):
+        self.gradient_flow_mode = enabled
+
     def forward(self, x):
-        with torch.no_grad():
+        if self.gradient_flow_mode:
             self.clip.encode_image(x)
             g = torch.stack([h.output for h in self.hooks], dim=2)[0, :, :, :]
+        else:
+            with torch.no_grad():
+                self.clip.encode_image(x)
+                g = torch.stack([h.output for h in self.hooks], dim=2)[0, :, :, :]
 
         g = self.proj1(g.float())
 
@@ -86,10 +94,16 @@ class RineModel(nn.Module):
 
         return p, z
 
+    def score(self, img, apply_sigmoid=False):
+        logits, _ = self.forward(img)
+        logits = logits.flatten()
+        if apply_sigmoid:
+            return logits.sigmoid()
+        return logits
+
     def predict(self, img):
         with torch.no_grad():
-            logits, _ = self.forward(img)
-            return logits.sigmoid().flatten().tolist()
+            return self.score(img, apply_sigmoid=True).tolist()
         
     def load_weights(self, ckpt):
         state_dict = torch.load(ckpt, map_location='cpu')

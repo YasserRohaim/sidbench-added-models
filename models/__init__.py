@@ -123,5 +123,13 @@ def get_model(opt):
     model.eval()
     model = model.to(device)
 
-    return model
+    gradient_flow_mode = bool(getattr(opt, 'gradientFlowMode', False))
+    if hasattr(model, 'set_gradient_flow'):
+        model.set_gradient_flow(gradient_flow_mode)
+    else:
+        model.gradient_flow_mode = gradient_flow_mode
 
+    if gradient_flow_mode:
+        print('Gradient flow mode: enabled')
+
+    return model

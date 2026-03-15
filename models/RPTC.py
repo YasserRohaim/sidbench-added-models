@@ -43,6 +43,7 @@ class HPF(nn.Module):
 class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
+        self.gradient_flow_mode = False
 
         self.group1 = HPF()
 
@@ -158,10 +159,18 @@ class Net(nn.Module):
             except:
                 self.load_state_dict({k.replace('module.', ''): v for k, v in state_dict['netC'].items()})
 
+    def set_gradient_flow(self, enabled=True):
+        self.gradient_flow_mode = enabled
+
+    def score(self, img, apply_sigmoid=False):
+        logits = self.forward(img).flatten()
+        if apply_sigmoid:
+            return logits.sigmoid()
+        return logits
 
     def predict(self, img):
         with torch.no_grad():
-            return self.forward(img).sigmoid().flatten().tolist()
+            return self.score(img, apply_sigmoid=True).tolist()
     
 
 def initWeights(module):

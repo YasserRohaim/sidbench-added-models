@@ -5,3 +5,7 @@ uv.lock
 __pycache__
 weights
 pyproject.toml
+stablediffusion3-sid
+images
+spai_preds.csv
+spai

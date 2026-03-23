@@ -3,7 +3,13 @@ import os
 import urllib
 import warnings
 from typing import Any, Union, List
-from pkg_resources import packaging
+try:
+    from packaging import version as packaging_version
+except ImportError:
+    # Fallback for environments where `packaging` is only available via setuptools.
+    from pkg_resources import packaging as _pkg_resources_packaging
+    packaging_version = _pkg_resources_packaging.version
+
 
 import torch
 from PIL import Image

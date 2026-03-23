@@ -76,5 +76,10 @@ MODELS = [
         "modelName": "SPAI",
         "trainedOn": "latent_diffusion",
         "ckpt": "./weights/spai/spai.pth"
+    },
+    {
+        "modelName": "D3",
+        "trainedOn": "multi-generator",
+        "ckpt": "./weights/d3/classifier.pth"
     }
 ]

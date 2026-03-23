@@ -10,6 +10,7 @@ from models.DIMD import DIMD
 from models.NPR import NPR
 from models.Dire import Dire
 from models.DeFake import DeFake
+from models.D3 import D3
 
 import re
 import torch
@@ -19,7 +20,7 @@ from preprocessing.lgrad.models import build_model
 from utils.util import setup_device
 
 
-VALID_MODELS = ['CNNDetect', 'FreqDetect', 'Fusing', 'GramNet', 'LGrad', 'UnivFD', 'RPTC', 'Rine', 'DIMD', 'NPR', 'Dire', 'DeFake', 'SPAI']
+VALID_MODELS = ['CNNDetect', 'FreqDetect', 'Fusing', 'GramNet', 'LGrad', 'UnivFD', 'RPTC', 'Rine', 'DIMD', 'NPR', 'Dire', 'DeFake', 'SPAI', 'D3']
 
 
 def get_model(opt):
@@ -60,6 +61,13 @@ def get_model(opt):
     elif model_name == 'SPAI':
         from models.SPAI import SPAI
         model = SPAI(opt=opt)
+    elif model_name == 'D3':
+        model = D3(
+            arch=getattr(opt, 'd3Arch', 'ViT-L/14'),
+            shuffle_times=getattr(opt, 'd3ShuffleTimes', 1),
+            original_times=getattr(opt, 'd3OriginalTimes', 1),
+            patch_size=getattr(opt, 'd3PatchSize', 14),
+        )
     elif model_name == 'DIMD':
         model = DIMD()
     elif model_name == 'Dire':

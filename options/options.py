@@ -12,7 +12,7 @@ class TestOptions():
     def initialize(self, parser):
 
         parser.add_argument('--dataPath', type=str, default=None, help='dir name of data')
-        parser.add_argument('--modelName', type=str, default='UnivFD', help='One of CNNDetect, FreqDetect, Fusing, GramNet, LGrad, UnivFD, RPTC, Rine, DIMD, NPR, Dire, DeFake, SPAI')    
+        parser.add_argument('--modelName', type=str, default='UnivFD', help='One of CNNDetect, FreqDetect, Fusing, GramNet, LGrad, UnivFD, RPTC, Rine, DIMD, NPR, Dire, DeFake, SPAI, D3')    
         parser.add_argument('--ckpt', type=str, default='./weights/univfd/fc_weights.pth', help='Must match with the selected model')
 
         parser.add_argument('--predictionsFile', type=str, default='predictions.csv', help='file to save predictions')
@@ -60,6 +60,12 @@ class TestOptions():
         parser.add_argument('--spaiConfigPath', type=str, default='./spai/configs/spai.yaml', help='Path to SPAI config file')
         parser.add_argument('--spaiFeatureExtractionBatch', type=int, default=None, help='Override SPAI feature extraction batch size')
 
+        # D3
+        parser.add_argument('--d3Arch', type=str, default='ViT-L/14', help='D3 CLIP backbone')
+        parser.add_argument('--d3ShuffleTimes', type=int, default=1, help='Number of shuffled discrepancy views')
+        parser.add_argument('--d3OriginalTimes', type=int, default=1, help='Number of original views')
+        parser.add_argument('--d3PatchSize', type=int, default=14, help='Patch size for D3 patch shuffling')
+
         self.initialized = True
         
         return parser
@@ -79,7 +85,7 @@ class EvalOptions():
         parser.add_argument('--family',  default=None, help='family of generative model: gan, deepfake, perceptual_loss, low_level_vision, diffusion')
         parser.add_argument('--maxSample', type=int, default=None, help='only check this number of images for both fake/real')
 
-        parser.add_argument('--modelName', type=str, default='UnivFD', help='One of CNNDetect, FreqDetect, Fusing, GramNet, LGrad, UnivFD, RPTC, Rine, DIMD, NPR, Dire, DeFake, SPAI')    
+        parser.add_argument('--modelName', type=str, default='UnivFD', help='One of CNNDetect, FreqDetect, Fusing, GramNet, LGrad, UnivFD, RPTC, Rine, DIMD, NPR, Dire, DeFake, SPAI, D3')    
         parser.add_argument('--ckpt', type=str, default='./weights/univfd/fc_weights.pth', help='Must match with the selected model')
 
         parser.add_argument('--resultFolder', type=str, default='test_results', help='')
@@ -132,6 +138,12 @@ class EvalOptions():
         # SPAI
         parser.add_argument('--spaiConfigPath', type=str, default='./spai/configs/spai.yaml', help='Path to SPAI config file')
         parser.add_argument('--spaiFeatureExtractionBatch', type=int, default=None, help='Override SPAI feature extraction batch size')
+
+        # D3
+        parser.add_argument('--d3Arch', type=str, default='ViT-L/14', help='D3 CLIP backbone')
+        parser.add_argument('--d3ShuffleTimes', type=int, default=1, help='Number of shuffled discrepancy views')
+        parser.add_argument('--d3OriginalTimes', type=int, default=1, help='Number of original views')
+        parser.add_argument('--d3PatchSize', type=int, default=14, help='Patch size for D3 patch shuffling')
 
         self.initialized = True
 
@@ -196,6 +208,12 @@ class TrainOptions():
         # SPAI
         parser.add_argument('--spaiConfigPath', type=str, default='./spai/configs/spai.yaml', help='Path to SPAI config file')
         parser.add_argument('--spaiFeatureExtractionBatch', type=int, default=None, help='Override SPAI feature extraction batch size')
+
+        # D3
+        parser.add_argument('--d3Arch', type=str, default='ViT-L/14', help='D3 CLIP backbone')
+        parser.add_argument('--d3ShuffleTimes', type=int, default=1, help='Number of shuffled discrepancy views')
+        parser.add_argument('--d3OriginalTimes', type=int, default=1, help='Number of original views')
+        parser.add_argument('--d3PatchSize', type=int, default=14, help='Patch size for D3 patch shuffling')
 
         self.initialized = True
 

@@ -19,7 +19,7 @@ from preprocessing.lgrad.models import build_model
 from utils.util import setup_device
 
 
-VALID_MODELS = ['CNNDetect', 'FreqDetect', 'Fusing', 'GramNet', 'LGrad', 'UnivFD', 'RPTC', 'Rine', 'DIMD', 'NPR', 'Dire', 'DeFake']
+VALID_MODELS = ['CNNDetect', 'FreqDetect', 'Fusing', 'GramNet', 'LGrad', 'UnivFD', 'RPTC', 'Rine', 'DIMD', 'NPR', 'Dire', 'DeFake', 'SPAI']
 
 
 def get_model(opt):
@@ -57,6 +57,9 @@ def get_model(opt):
         model = UnivFD()
     elif model_name == 'RPTC':
         model = RPTCNet()
+    elif model_name == 'SPAI':
+        from models.SPAI import SPAI
+        model = SPAI(opt=opt)
     elif model_name == 'DIMD':
         model = DIMD()
     elif model_name == 'Dire':

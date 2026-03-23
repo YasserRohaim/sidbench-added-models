@@ -112,10 +112,18 @@ def validate(model, loader, device, dataset_length, find_threshold=False):
                     # i.to(device) if isinstance(i, torch.Tensor) else [j.to(device) for j in i]
                     i.to(device) if isinstance(i, torch.Tensor) else i for i in img
                 ]
-                predictions = model.predict(*img)
+                if getattr(model, 'gradient_flow_mode', False):
+                    with torch.no_grad():
+                        predictions = model.score(*img, apply_sigmoid=True).cpu().flatten().tolist()
+                else:
+                    predictions = model.predict(*img)
             else:
                 img = img.to(device) 
-                predictions = model.predict(img)    
+                if getattr(model, 'gradient_flow_mode', False):
+                    with torch.no_grad():
+                        predictions = model.score(img, apply_sigmoid=True).cpu().flatten().tolist()
+                else:
+                    predictions = model.predict(img)
 
             y_pred.extend(predictions)
             y_true.extend(label.flatten().tolist())
@@ -221,4 +229,3 @@ if __name__ == '__main__':
         ]
     
     run_for_model(datasets=datasets, model=model, opt=opt)
-

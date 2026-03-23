@@ -321,6 +321,25 @@ def defake_processing(img, opt):
     return img
 
 
+def spai_processing(img, opt):
+    transformations = []
+
+    if opt.loadSize is not None:
+        transformations.append(transforms.Resize(size=(opt.loadSize, opt.loadSize)))
+
+    if opt.cropSize is not None:
+        if opt.isTrain:
+            crop_func = transforms.RandomCrop(opt.cropSize)
+        else:
+            crop_func = transforms.CenterCrop(opt.cropSize)
+        transformations.append(crop_func)
+
+    transformations.append(transforms.ToTensor())
+
+    transform = transforms.Compose(transformations)
+    return transform(img)
+
+
 def processing(img, opt, label, image_path):
     assert opt.modelName in VALID_MODELS
 
@@ -360,7 +379,9 @@ def processing(img, opt, label, image_path):
     
     if opt.modelName == 'DeFake':
         return defake_processing(img, opt), label, image_path
+
+    if opt.modelName == 'SPAI':
+        return spai_processing(img, opt), label, image_path
     
     raise ValueError(f"Model {opt.modelName} not found")
-
 

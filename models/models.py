@@ -67,10 +67,14 @@ MODELS = [
         "trainedOn": "progan",
         "ckpt": "./weights/gramnet/Gram.pth"
     },
-        {
+    {
         "modelName": "Dire",
         "trainedOn": "progan",
         "ckpt": "./weights/gramnet/Gram.pth"
+    },
+    {
+        "modelName": "SPAI",
+        "trainedOn": "latent_diffusion",
+        "ckpt": "./weights/spai/spai.pth"
     }
 ]
-

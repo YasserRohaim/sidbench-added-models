@@ -11,6 +11,7 @@ CLIP_STD = (0.26862954, 0.26130258, 0.27577711)
 
 RESNET_RGB_MODELS = {'CNNDetect', 'DIMD', 'NPR', 'GramNet'}
 CLIP_RGB_MODELS = {'UnivFD', 'Rine'}
+SPAI_RGB_MODELS = {'SPAI'}
 
 NON_DIFFERENTIABLE_RGB_MODELS = {
     'FreqDetect': 'Requires NumPy/SciPy DCT preprocessing.',
@@ -83,6 +84,11 @@ def prepare_model_inputs(images, opt):
         processed = _resize_square(images, getattr(opt, 'loadSize', None))
         processed = _center_crop(processed, getattr(opt, 'cropSize', None))
         return _normalize(processed, CLIP_MEAN, CLIP_STD)
+
+    if model_name in SPAI_RGB_MODELS:
+        processed = _resize_square(images, getattr(opt, 'loadSize', None))
+        processed = _center_crop(processed, getattr(opt, 'cropSize', None))
+        return processed
 
     if model_name == 'Fusing':
         input_img = _normalize(images, IMAGENET_MEAN, IMAGENET_STD)
